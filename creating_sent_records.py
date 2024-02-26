@@ -20,6 +20,9 @@ def create_sent_records():
                         continue
                     entry = df.at[row, col_name]
                     time_diff = df.at[row, "DateTimeDiff"]
+                    if col_name == "DayOfWeek":
+                        out_str += f"Today is {entry} {ZTZ_SEPARATOR}"
+                        continue
                     if "Diff" not in col_name:
                         if entry:
                             out_str += f"{col_name} is {entry}" \
