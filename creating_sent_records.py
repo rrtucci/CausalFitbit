@@ -12,7 +12,7 @@ def articulate_data(df, row, col_name):
         str0 = ""
     elif col_name == "DayOfWeek":
         str0 = f"Today is {entry} {ZTZ_SEPARATOR}"
-    elif "Diff" in col_name:
+    elif "LogDiff" in col_name:
         str0 = f"{col_name} is {entry} after {time_diff} {ZTZ_SEPARATOR}"
     else:
         str0 = f"{col_name} is {entry} {ZTZ_SEPARATOR}"
