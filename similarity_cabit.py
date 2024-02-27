@@ -57,6 +57,6 @@ def ztz_similarity(ztz1, ztz2, **kwargs):
             time2 = float(ztz2.split()[-1].strip())
             fraction1= float(ztz1.split()[-3].strip())
             fraction2 = float(ztz2.split()[-3].strip())
-            
+
 
     return round(odds, 3)
