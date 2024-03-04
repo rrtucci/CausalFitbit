@@ -96,7 +96,9 @@ class Dag:
         else:
             self.arrow_to_acc_rej_nums[arrow][1] += 1
 
-    def build_node_to_clean_ztz_dict(self, clean_dir):
+    def build_node_to_clean_ztz_dict(self,
+                                     clean_dir,
+                                     skip_1st_line=False):
         """
         This method builds from scratch and returns a dictionary called
         `nd_to_clean_ztz` that maps each node to a clean sentence. ztz
@@ -113,13 +115,24 @@ class Dag:
 
         """
         path = clean_dir + "/" + self.m_title + ".txt"
+        is_csv = False
+        if not os.path.isfile(path):
+            path = path.replace(".txt", ".csv")
+            is_csv = True
+        assert os.path.isfile(path)
 
         time_to_clean_ztz = {}
         with open(path, "r") as f:
             time = -1
             for line in f:
                 time += 1
-                time_to_clean_ztz[time] = line.strip()
+                if is_csv:
+                    if time == 0:
+                        continue
+                    else:
+                        time_to_clean_ztz[time-1] = line.strip()
+                else:
+                    time_to_clean_ztz[time] = line.strip()
 
         nd_to_clean_ztz = {}
         for nd in self.nodes:
@@ -242,12 +255,18 @@ class Dag:
                 hprob_nodes.append(arrow[1])
 
         hprob_nodes = sorted(hprob_nodes, key=lambda x: x.time)
-        nd_to_clean_ztz = self.build_node_to_clean_ztz_dict(clean_dir)
+        if clean_dir:
+            nd_to_clean_ztz = self.build_node_to_clean_ztz_dict(clean_dir)
+        else:
+            nd_to_clean_ztz = None
         nd_to_simple_ztz = self.build_node_to_simple_ztz_dict(simp_dir)
 
         for nd in hprob_nodes:
-            print(node_str(nd) + ":")
-            print("(FULL)", nd_to_clean_ztz[nd])
+            print(color.GREEN + color.BOLD + node_str(nd) + ":" + color.END)
+            ztz0 = ""
+            if nd_to_clean_ztz:
+                ztz0 = nd_to_clean_ztz[nd]
+            print("(FULL)", ztz0)
             print("(PART)", nd_to_simple_ztz[nd])
 
     @staticmethod

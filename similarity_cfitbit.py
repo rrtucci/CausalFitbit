@@ -10,16 +10,33 @@ import numpy as np
 from cfitbit_globals import *
 
 def get_feature(ztz):
-    return ztz.split().strip()[0].replace("=", "")
+    if "&z=" not in ztz:
+        return None
+    return ztz.split()[0].strip().replace("=", "")
 
 def get_z(ztz):
-    return ztz.split().strip()[-1]
+    if "&z=" not in ztz:
+        return None
+    return float(ztz.split()[-1].strip())
+
+def get_day(ztz):
+    if "Today" not in ztz:
+        return None
+    return ztz.split()[-1].strip()
 
 def get_common_feature(ztz1, ztz2):
     feature1 = get_feature(ztz1)
     feature2 = get_feature(ztz2)
     if feature1 == feature2 and feature1 in FEATURES:
         return feature1
+    else:
+        return None
+    
+def get_common_day(ztz1, ztz2):
+    day1 = get_day(ztz1)
+    day2 = get_day(ztz2)
+    if day1 == day2 and day1 in DAYS:
+        return day1
     else:
         return None
 
@@ -46,13 +63,13 @@ def ztz_similarity(ztz1, ztz2, **kwargs):
 
     """
     feature = get_common_feature(ztz1, ztz2)
-    if not feature:
-        return 0
-
+    # day = get_common_day(ztz1, ztz2)
+    day = None
     z1 = get_z(ztz1)
     z2 = get_z(ztz2)
-    if abs(z1-z2) < Z_RADIUS:
+    if feature and abs(z1-z2) < Z_RADIUS:
         # ssents are  similar
+        # print("asderf", feature, abs(z1-z2))
         return SIMI_THRESHOLD + 1
     else:
         # ssents are too different
