@@ -1,0 +1,105 @@
+
+
+\documentclass[12pt]{article}
+\input{bayesuvius.sty}
+
+
+\begin{document}
+\title{CausalFitbit, an example of DEFT (DAG Extraction From Text)}
+\date{ \today}
+\author{Robert R. Tucci\\
+        tucci@ar-tiste.com}
+\maketitle
+\vskip2cm
+\section*{Abstract}
+A github repo called ``Mappa\_Mundi", contains a Python app for
+doing causal DEFT (DAG Extraction from Text).
+That repo includes a white paper explaining the
+DEFT algorithm and the app that implements it.
+In this white paper, I 
+explain the Python app ``CausalFitbit"
+that applies the  Mappa Mundi software  to 
+a Fitbit dataset from Kaggle.
+The software described in this paper
+is available as open source at the github repo
+``CausalFitbit".
+
+\newpage
+
+
+
+
+\begin{enumerate}
+
+\item {\bf Thinning and Cleaning up the Kaggle Dataset}
+
+The original dataset if available at Kaggle (Ref. \cite{kaggle-fitbit}) as a csv file. That
+Kaggle dataset is fairly large ($\sim$ 85MB)
+because it contains heartbeat (i.e., pulse) data every 10 seconds or so. We used Pandas to average the pulse data over each hour interval.  The resulting thinned dataset file
+is just 160KB. The notebook that we used to do the thing is called
+
+ \centerline{{\tt jupyter\_notebooks/heartrate\_data\_thinning.ipynb}}
+ 
+ processed the data further with the following notebook:
+
+\centerline{{\tt
+ jupyter\_notebooks/data\_preparation}}
+ 
+ The data preparation notebook generates one 
+ csv (comma separated values) file per patient (for a total of 33 patients) and
+ deposits those file in the folder named 
+ {\tt patient\_csv\_records} 
+
+
+\item {\bf Adding Velocity columns}
+\begin{table}[h!]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\rowcolor[HTML]{FFFFC7} 
+id & datetime & f1 & f2 \\ \hline
+1503960366 & 2016-04-12 00:00:00 & 3.1 & 1.8 \\ \hline
+1503960366 & 2016-04-13 00:00:00 & 2.8 & 2.2 \\ \hline
+\end{tabular}
+\caption{without Vel}
+\label{tab-cfitbit-without-vel}
+\end{table}
+
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+\rowcolor[HTML]{FFFFC7} 
+id & datetime & f1 & f1Vel & f2 & f2Vel \\ \hline
+1503960366 & 2016-04-12 00:00:00 & 3.1 & nan & 1.8 & nan \\ \hline
+1503960366 & 2016-04-13 00:00:00 & 2.8 & (2.8-3.1)/24 & 2.2 & (2.2-1.8)/24 \\ \hline
+\end{tabular}
+\caption{with vel}
+\label{tab-cfitbit-with-vel}
+\end{table}
+
+\item {\bf Calculating $z$'s}
+\begin{table}[h!]
+\centering
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+\rowcolor[HTML]{FFFFC7} 
+id & datetime & f1 & f1Vel & f2 & f2Vel \\ \hline
+1503960366 & 2016-04-13 00:00:00 & 2.8 & -.0125 & 2.2 & .0166 \\ \hline
+\end{tabular}
+\caption{}
+\label{tab-csv}
+\end{table}
+
+\item {\bf Articulating (Wordifying)}
+
+\noindent{\footnotesize{\tt
+f1= 2.8 \&z= .1<SEP>f1Vel= -.01 \&z= .3<SEP>f2= 2.2 \&z= .1<SEP>f2Vel= .016 \&z= .2}}
+
+\end{enumerate}
+
+
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}

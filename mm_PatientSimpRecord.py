@@ -1,8 +1,8 @@
 import os
 import pandas as pd
 import numpy as np
-from cfitbit_globals import *
-from cfitbit_utils import *
+from globals import *
+from utils import *
 
 class PatientSimpRecord:
     def __init__(self, id_str):

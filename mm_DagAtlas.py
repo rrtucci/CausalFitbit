@@ -1,9 +1,9 @@
-from Dag import *
-from BatchSimilarity import *
-from cfitbit_utils import *
+from mm_Dag import *
+from mm_BatchSimilarity import *
+from utils import *
 import sys
 from itertools import product
-from cfitbit_globals import *
+from globals import *
 
 import pickle as pik
 from time import time

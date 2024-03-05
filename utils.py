@@ -4,7 +4,7 @@ This file holds some general purpose functions (utilities).
 
 """
 import os
-from cfitbit_globals import *
+from globals import *
 import shutil
 
 

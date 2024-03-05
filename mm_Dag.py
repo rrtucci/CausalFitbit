@@ -1,8 +1,8 @@
 import os
-from Node import *
+from mm_Node import *
 import pickle as pik
-from cfitbit_globals import *
-from cfitbit_utils import *
+from globals import *
+from utils import *
 
 import graphviz as gv
 from IPython.display import display, Image

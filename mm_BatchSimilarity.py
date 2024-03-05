@@ -1,6 +1,6 @@
 import importlib as imp
-from cfitbit_globals import *
-from Dag import *
+from globals import *
+from mm_Dag import *
 
 simi_def = imp.import_module(SIMI_DEF)
 from sklearn.metrics.pairwise import cosine_similarity

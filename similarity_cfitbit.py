@@ -7,7 +7,7 @@ ztz = sentence
 
 """
 import numpy as np
-from cfitbit_globals import *
+from globals import *
 
 def get_feature(ztz):
     if "&z=" not in ztz:
