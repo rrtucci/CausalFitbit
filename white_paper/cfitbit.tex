@@ -12,46 +12,106 @@
 \maketitle
 \vskip2cm
 \section*{Abstract}
-A github repo called ``Mappa\_Mundi", contains a Python app for
+Previously,
+we created a GitHub repo called  ``Mappa\_Mundi"  that contains a Python app for
 doing causal DEFT (DAG Extraction from Text).
-That repo includes a white paper explaining the
-DEFT algorithm and the app that implements it.
-In this white paper, I 
-explain the Python app ``CausalFitbit"
+In this white paper, we
+describe the Python app ``CausalFitbit"
 that applies the  Mappa Mundi software  to 
 a Fitbit dataset from Kaggle.
-The software described in this paper
-is available as open source at the github repo
-``CausalFitbit".
+The CausalFitbit software 
+is available as open source at  GitHub.
 
 \newpage
 
+Previously,
+we created a GitHub repo called  ``Mappa\_Mundi" (Ref.\cite{github-mappa-mundi}) that contains a Python app for
+doing causal DEFT (DAG Extraction from Text).
 
+In this white paper, we
+describe the Python app ``CausalFitbit"
+that applies the  Mappa Mundi software  to 
+a Fitbit dataset (Ref. \cite{fitbit-dataset}) from Kaggle.
+The CausalFitbit software 
+is available as open source at the GitHub repo
+``CausalFitbit" (Ref.\cite{causal-fitbit}).
 
+Note that the Mappa Mundi app uses LLMs 
+to perform 2 distinct jobs: 
+\begin{itemize}
+\item doing {\bf sentence splitting} via a fine tuning of BERT called Openie6\footnote{Shameless
+plug: You could also use my free software SentenceAx. SentenceAx (Ref.\cite{sentence-ax}) is a full rewrite of Openie6.}
+
+\item calculating {\bf sentence similarities} via sBERT.
+\end{itemize}
+
+CausalFitbit, on the other hand,
+doesn't use LLMs at all (even though it uses the same algorithm as Mappa Mundi). How can this be? 
+
+\begin{itemize}
+\item
+There is no sentence splitting to be done in CausalFitbit, because the sentences are already split; they are simple sentences from the onset.  
+\item In CausalFitbit, we provide an analytical
+formula for calculating sentence similarity. This will be explained better later on,
+but basically, what we do is 
+calculate the Z-distance between two ``sentences". A sentence in this case
+is just something like $z=5$,
+and the Z-distance between sentences
+$z=5$ and $z=1$ is $|5-1|=4$.
+\end{itemize} 
+
+The simple sentences (ssents)
+considered in the Mappa Mundi
+repo are {\bf linguistic}, such as ``The ball is red". The ssents in 
+CausalFitbit are {\bf symbolic},
+such as $z=5$. In future,
+we expect that we will be using 
+the Mappa Mundi algorithm
+with a combination of both
+linguistic and symbolic ssents.
+
+All necessary 
+CausalFitbit 
+operations are performed
+by 3 jupyter notebooks
+which we will describe in detail next.
 
 \begin{enumerate}
 
-\item {\bf Thinning and Cleaning up the Kaggle Dataset}
+\item {\bf {\color{red}{\tt heartrate\_data\_thinning.ipynb} } notebook}\footnote{Unless otherwise stated,
+all jupyter  notebooks
+are to be found in the folder entitled
+{\tt jupyter\_notebooks}.}
 
-The original dataset if available at Kaggle (Ref. \cite{kaggle-fitbit}) as a csv file. That
-Kaggle dataset is fairly large ($\sim$ 85MB)
-because it contains heartbeat (i.e., pulse) data every 10 seconds or so. We used Pandas to average the pulse data over each hour interval.  The resulting thinned dataset file
-is just 160KB. The notebook that we used to do the thing is called
 
- \centerline{{\tt jupyter\_notebooks/heartrate\_data\_thinning.ipynb}}
- 
- processed the data further with the following notebook:
+The original dataset is available at  Kaggle (Ref. \cite{fitbit-dataset}) as a csv (comma separated values) file. The
+dataset is fairly large ($\sim$ 85MB)
+because it contains heartbeat (i.e., pulse) data sometimes every 10 seconds or so. 
 
-\centerline{{\tt
- jupyter\_notebooks/data\_preparation}}
- 
- The data preparation notebook generates one 
- csv (comma separated values) file per patient (for a total of 33 patients) and
- deposits those file in the folder named 
+In this notebook, we use Pandas to average the pulse data over each hour interval.  The resulting thinned dataset file
+is just 160KB.  
+ \item {\bf {\color{red}{\tt data\_preparation.ipynb}} notebook}
+
+
+This notebook generates one 
+ csv  file per patient (for a total of 33 patients). It
+ stores those files in the folder named 
  {\tt patient\_csv\_records} 
+ 
+ This notebook does a whole
+ bunch of chores, most of which are  
+ menial, but some aren't.
+ One non-medial task it does is to add columns for ``velocity" features.
+  
+  
+  Table \ref{tab-cfitbit-without-vel}
+  shows a table illustrating a made-up, pedagogical 2 line dataset. Table \ref{tab-cfitbit-with-vel}
+  shows the same
+  dataset as Table \ref{tab-cfitbit-without-vel}, but after
+  adding two more columns, f1Vel and f2Vel,
+  for the velocities of the two features f1 and f2. 
 
 
-\item {\bf Adding Velocity columns}
 \begin{table}[h!]
 \centering
 \begin{tabular}{|l|l|l|l|}
@@ -61,7 +121,7 @@ id & datetime & f1 & f2 \\ \hline
 1503960366 & 2016-04-12 00:00:00 & 3.1 & 1.8 \\ \hline
 1503960366 & 2016-04-13 00:00:00 & 2.8 & 2.2 \\ \hline
 \end{tabular}
-\caption{without Vel}
+\caption{Dataset without velocity columns.}
 \label{tab-cfitbit-without-vel}
 \end{table}
 
@@ -75,11 +135,33 @@ id & datetime & f1 & f1Vel & f2 & f2Vel \\ \hline
 1503960366 & 2016-04-12 00:00:00 & 3.1 & nan & 1.8 & nan \\ \hline
 1503960366 & 2016-04-13 00:00:00 & 2.8 & (2.8-3.1)/24 & 2.2 & (2.2-1.8)/24 \\ \hline
 \end{tabular}
-\caption{with vel}
+\caption{Dataset of Table \ref{tab-cfitbit-without-vel}
+after adding 2 velocity columns f1Vel and f2Vel.}
 \label{tab-cfitbit-with-vel}
 \end{table}
 
-\item {\bf Calculating $z$'s}
+As can be seen from Table
+\ref{tab-cfitbit-with-vel},
+to add a velocity column  for any feature of a Table, for instance f1,
+we divide 
+
+$\Delta f1=$ the 
+previous value of f1
+minus its current value
+
+by 
+
+$\Delta t=$ the previous value of time in hours minus  the current value of time.
+
+This can all be done with one line of code using  the powerful
+Pandas function {\tt diff()}.
+
+\item {\bf {\color{red}
+{\tt navigating\_patient\_records.ipynb}} notebook
+}
+
+
+
 \begin{table}[h!]
 \centering
 \begin{tabular}{|l|l|l|l|l|l|}
@@ -88,16 +170,184 @@ id & datetime & f1 & f1Vel & f2 & f2Vel \\ \hline
 id & datetime & f1 & f1Vel & f2 & f2Vel \\ \hline
 1503960366 & 2016-04-13 00:00:00 & 2.8 & -.0125 & 2.2 & .0166 \\ \hline
 \end{tabular}
-\caption{}
-\label{tab-csv}
+\caption{This made-up single line
+of a dataset would be replaced
+by the following single line 
+of a patient simp file: 
+{\tt
+f1= 2.8 \&z= .1<SEP>f1Vel= -.01 \&z= .3<SEP>f2= 2.2 \&z= .1<SEP>f2Vel= .016 \&z= .2}
+}
+\label{tab-wordifying}
 \end{table}
 
-\item {\bf Articulating (Wordifying)}
 
-\noindent{\footnotesize{\tt
-f1= 2.8 \&z= .1<SEP>f1Vel= -.01 \&z= .3<SEP>f2= 2.2 \&z= .1<SEP>f2Vel= .016 \&z= .2}}
+
+\begin{itemize}
+
+This notebook accomplishes
+the following 3 tasks.
+\item {\bf wordifying}
+
+This step uses the class
+{\tt PatientSimpRecord}. It generates
+a simp (simplified sentence) record 
+for each csv patient record in
+the folder {\tt patient\_csv\_records}
+and stores the resulting
+file in the {\tt patient\_simp\_record} folder.
+
+What we call wordifying 
+is illustrated by Table \ref{tab-wordifying}.
+
+For any feature (i.e., column) $f$,
+let 
+
+$\sigma_f=$ the standard 
+deviation of the column $f$ (calculated
+with the Pandas function {\tt std()})
+
+$<f>=$ the average of the column $f$ (calculated with the Pandas function {\tt mean()})
+
+Then
+
+\beq
+z(f) = \frac{f-<f>}{\sigma_f}
+\label{eq-z-f}
+\eeq
+
+Wordifying means we replace 
+a segment like {\tt f1=2.8}
+by a segment like {\tt f1=2.8 \&z=.1}.
+The latter looks like a ssent if you 
+read {\tt \&z=.1} as  ``and $z$ equals 0.1.
+
+An important feature of wordifying
+is that the number of columns 
+in every row need not me the same
+because in the wordified rows, if there is missing information for 
+a cell, we skip it.
+
+
+\item {\bf DAG atlas}
+
+This step is practically
+identical
+to its counterpart
+step in the Mappa Mundi repo.
+In this step, we
+use the class {\tt DagAtlas}
+located in the file
+{\tt mm\_DagAtlas}, to construct 
+as Dag atlas, 
+based on the 
+patient files in folder
+{\tt patient\_simp\_records}.
+Note that all files starting with ``mm\_" come verbatim from the
+Mappa Mundi app (Ref.\cite{github-mappa-mundi}).
+
+In building a DagAtlas,
+we are confronted with
+a decision problems: whether to accept or reject a bridge. The {\bf acceptance indicator functions} $A_{bridge}$
+ for this
+decision problems is as follows.
+Let 
+
+$simi()=$ {\bf similarity function}, 
+
+$z(f)=$ defined by Eq.(\ref{eq-z-f})
+
+$R=$ the {\bf z-radius},
+
+$simi^*=$
+{\bf similarity threshold}.
+
+Then
+\beq
+simi(s_1, s_2)=
+\left\{
+\begin{array}{ll}
+simi^* + 1 & \text{if }
+|z(s_1)-z(s_2)| < R
+\\
+simi^* - 1 & \text{if }
+|z(s_1)-z(s_2)| > R
+\end{array}
+\right.
+\label{eq-simi-z-def}
+\eeq
+
+\beq
+A_{bridge}=
+\left\{
+\begin{array}{ll}
+1 & \text{if }
+simi(s_1, s_2) > simi^*
+\\
+0 & \text{otherwise}
+\end{array}
+\right.
+\label{eq-A-bridge}
+\eeq
+
+
+Eq.(\ref{eq-A-bridge})
+is also used in Mappa Mundi, 
+but Eq.(\ref{eq-simi-z-def}) is new. 
+
+
+\item {\bf Visualizing}
+
+This step is practically
+identical
+to its counterpart
+step in the Mappa Mundi repo.
+In this step, we
+use the class {\tt Dag}
+located in the file
+{\tt mm\_Dag} and graphviz,
+to draw DAGs.
+
+
+
+In visualizing our DAGs,
+we are confronted with
+a decision problem: whether to accept or reject an arrow. The {\bf acceptance indicator function}
+$A_{arrow}$ for this decision
+ problem is as follows.
+
+
+\beq
+A_{arrow}=
+\left\{
+\begin{array}{ll}
+1 &
+\text{if }
+p_{acc}>p_{acc}^*, 
+N_{acc}> N_{acc}^*
+\\
+0 & \text{otherwise}
+\end{array}
+\right. 
+\label{eq-A-arrow}
+\eeq
+Eq.(\ref{eq-A-arrow})
+is also used in Mappa Mundi.
+There you will find
+the definitions of $p_{acc}$ and $N$.
+Only arrows that
+satisfy $A_{arrow}=1$ are drawn.
+The thresholds $p_{acc}^*$
+an $N^*$ are
+set by the
+user.
+
+\end{itemize}
 
 \end{enumerate}
+
+
+
+
 
 
 \bibliographystyle{plain}
