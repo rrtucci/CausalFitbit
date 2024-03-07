@@ -1,8 +1,8 @@
 Welcome to CausalFitbit.
 
 CausalFitbit is a Python app
-for doing causal DEFT (DAG Extraction From Text).
-This is applied herein to a Fitbit dataset available
+for doing causal DEFT (DAG Extraction From Text)
+from a Fitbit dataset available
 at Kaggle.
 
 We describe the app in more detail in this 
