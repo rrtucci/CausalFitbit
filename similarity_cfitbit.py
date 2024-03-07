@@ -1,30 +1,77 @@
 """
 
-This file contains a function `ztz_similarity(ztz1, ztz2)`
+This file contains a method `ztz_similarity(ztz1, ztz2)`
 that returns the similarity of sentences `ztz1` and `ztz2`.
 ztz = sentence
 
+All other methods in this file are used solely inside
+`ztz_similarity(ztz1, ztz2)`
 
 """
 import numpy as np
 from globals import *
 
 def get_feature(ztz):
+    """
+
+    Parameters
+    ----------
+    ztz: str
+
+    Returns
+    -------
+    str | None
+
+    """
     if "&z=" not in ztz:
         return None
     return ztz.split()[0].strip().replace("=", "")
 
 def get_z(ztz):
+    """
+
+    Parameters
+    ----------
+    ztz: str
+
+    Returns
+    -------
+    float
+
+    """
     if "&z=" not in ztz:
         return None
     return float(ztz.split()[-1].strip())
 
 def get_day(ztz):
+    """
+
+    Parameters
+    ----------
+    ztz: str
+
+    Returns
+    -------
+    str
+
+    """
     if "Today" not in ztz:
         return None
     return ztz.split()[-1].strip()
 
 def get_common_feature(ztz1, ztz2):
+    """
+
+    Parameters
+    ----------
+    ztz1: str
+    ztz2: str
+
+    Returns
+    -------
+    str | None
+
+    """
     feature1 = get_feature(ztz1)
     feature2 = get_feature(ztz2)
     if feature1 == feature2 and feature1 in FEATURES:
@@ -33,6 +80,18 @@ def get_common_feature(ztz1, ztz2):
         return None
     
 def get_common_day(ztz1, ztz2):
+    """
+
+    Parameters
+    ----------
+    ztz1: str
+    ztz2: str
+
+    Returns
+    -------
+    str | None
+
+    """
     day1 = get_day(ztz1)
     day2 = get_day(ztz2)
     if day1 == day2 and day1 in DAYS:
