@@ -101,7 +101,7 @@ This notebook generates one
  This notebook does a whole
  bunch of chores, most of which are  
  menial, but some aren't.
- One non-medial task it does is to add columns for ``velocity" features.
+ One non-menial task it does is to add columns for ``velocity" features.
   
   
   Table \ref{tab-cfitbit-without-vel}
@@ -189,7 +189,7 @@ with the Pandas function {\tt std()})
 
 $\av{f}=$ the average of the column $f$ (calculated with the Pandas function {\tt mean()})
 
-Then
+Now define
 
 \beq
 z(f) = \frac{f-\av{f}}{\sigma_f}
@@ -254,7 +254,11 @@ the decision problem of whether to accept or reject a bridge. The {\bf acceptanc
 decision problem is as follows.
 Let 
 
-$simi()=$ {\bf similarity function}, 
+$simi(s_1, s_2)=$ {\bf similarity function}, maps two ssents $s_1$ ans $s_2$ to a positive number
+
+$f=$ feature (i.e., column of dataframe)
+
+$f(s)$= feature of ssent $s$
 
 $z(f)=$ defined by Eq.(\ref{eq-z-f})
 
@@ -268,11 +272,10 @@ Then
 simi(s_1, s_2)=
 \left\{
 \begin{array}{ll}
-simi^* + 1 & \text{if }
-|z(s_1)-z(s_2)| < R
+simi^* + 1 & \text{if $f(s_1)=f(s_2)$ and }
+|z(s_1)-z(s_2)| < R 
 \\
-simi^* - 1 & \text{if }
-|z(s_1)-z(s_2)| > R
+simi^* - 1 & \text{otherwise}
 \end{array}
 \right.
 \label{eq-simi-z-def}
@@ -324,7 +327,7 @@ A_{arrow}=
 \begin{array}{ll}
 1 &
 \text{if }
-p_{acc}>p_{acc}^*, 
+p_{acc}>p_{acc}^* \text{ and }
 N_{acc}> N_{acc}^*
 \\
 0 & \text{otherwise}
@@ -339,7 +342,7 @@ the definitions of $p_{acc}$ and $N$.
 Only arrows that
 satisfy $A_{arrow}=1$ are drawn.
 The thresholds $p_{acc}^*$
-an $N^*$ are
+and $N^*$ are
 set by the
 user.
 
